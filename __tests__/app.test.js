@@ -3,8 +3,9 @@ import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
 import UserService from '../lib/services/UserService.js';
+import Post from '../lib/models/Post.js';
 
-describe('user routes', () => {
+describe('* routes', () => {
 
   const agent = request.agent(app);
 
@@ -76,6 +77,35 @@ describe('user routes', () => {
       tags: ['neon genesis evangelion'],
       userId: user.id
     });
+    
+  });
+
+  it('gets all posts', async () => {
+
+    const user = await UserService.create({ 
+      email: 'tuckerhoog@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
+    const postAlpha = await Post.insert({
+      userId: user.id,
+      photoUrl: 'no',
+      caption: 'yes',
+      tags: ['maybe', 'so']
+    });
+
+    const postBravo = await Post.insert({
+      userId: user.id,
+      photoUrl: 'yes',
+      caption: 'no',
+      tags: ['so', 'maybe']
+    });
+
+    const res = await agent
+      .get('/api/v1/posts');
+
+    expect(res.body).toEqual([postAlpha, postBravo]);
     
   });
 
