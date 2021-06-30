@@ -3,7 +3,7 @@ import setup from '../data/setup.js';
 import request from 'supertest';
 import app from '../lib/app.js';
 
-const agent = request.agent(app);
+// const agent = request.agent(app);
 
 describe('user routes', () => {
 
@@ -25,6 +25,6 @@ describe('user routes', () => {
       email: 'tuckerhoog@tutanota.com'
     });
   });
-  
+
 });
 
