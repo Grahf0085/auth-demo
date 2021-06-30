@@ -17,7 +17,7 @@ describe('user routes', () => {
       .post('/api/v1/auth/signup')
       .send({
         email: 'tuckerhoog@tutanota.com',
-        password: 'p@ssword'
+        password: 'password'
       });
 
     expect(res.body).toEqual({
