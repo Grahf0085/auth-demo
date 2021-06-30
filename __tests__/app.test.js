@@ -4,7 +4,7 @@ import request from 'supertest';
 import app from '../lib/app.js';
 import UserService from '../lib/services/UserService.js';
 
-const agent = request.agent(app);
+// const agent = request.agent(app);
 
 describe('user routes', () => {
 
@@ -56,8 +56,34 @@ describe('user routes', () => {
 
 describe('post routes', () => {
 
-  beforeEach(() => {
-    return setup(pool);
+  const agent = request.agent(app);
+  let user;
+
+  beforeEach(async () => {
+    
+    await setup(pool);
+
+    user = await UserService.create({ 
+      email: 'tuckerhoog@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
+    // agent = request.agent(app);
+    // user = await agent
+    //   .post('/api/v1/signup')
+    //   .send({      
+    //     email: 'tuckerhoog@tutanota.com', 
+    //     password: 'password', 
+    //     profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    //   });
+
+    await agent
+      .post('/api/v1/login')
+      .send({
+        email: 'tuckerhoog@tutanota.com',
+        password: 'password'
+      });
   });
 
   it('creates a new post', async () => {
