@@ -112,13 +112,13 @@ describe('* routes', () => {
 
   it('gets post by id', async () => {
 
-    const user = await UserService.create({ 
+    await UserService.create({ 
       email: 'tuckerhoog@tutanota.com', 
       password: 'password', 
       profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
     });
 
-    const userTwo = await UserService.create({ 
+    await UserService.create({ 
       email: 'tuckerhoogTwo@tutanota.com', 
       password: 'password', 
       profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
@@ -131,7 +131,7 @@ describe('* routes', () => {
       tags: ['maybe', 'so']
     });
 
-    const postBravo = await Post.insert({
+    await Post.insert({
       userId: 1,
       photoUrl: 'sddfsdf',
       caption: 'sdfsdfsf',
@@ -166,7 +166,7 @@ describe('* routes', () => {
       tags: ['maybe', 'so'],
       email: 'tuckerhoog@tutanota.com',
       profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b',
-      comment: ['so cool', 'so not cool']
+      comment: ['so cool', 'so not cool', 'so so so so not cool']
     });
 
   });
@@ -230,6 +230,51 @@ describe('* routes', () => {
 
   });
 
+  it('gets list of 10 posts with most comments', async () => {
+
+    await UserService.create({ 
+      email: 'tuckerhoog@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
+    const array = [];
+
+    for (let i = 0; i < 15; i++) {
+
+      const postName = await Post.insert({
+        userId: 1,
+        photoUrl: 'www.image.com',
+        caption: 'amazing',
+        tags: ['sdgdfdsds']
+      });
+
+      array.push(postName);
+    }
+
+    for (let i = 15; i > 0; i--) {
+      
+      for (let j = i; j > 0; j--) {
+
+        await Comment.insert({
+          commentBy: 1,
+          post: i,
+          comment: 'so cool',
+        });
+
+      }
+
+    }
+
+    const res = await agent
+      .get('/api/v1/posts/popular');
+
+    expect(res.body).toEqual(expect.arrayContaining([array[14], array[13], array[12], array[11], array[10], array[9], array[8], array[7], array[6], array[5]]));
+    expect(res.body).toEqual(expect.not.arrayContaining([array[4], array[3], array[2], array[1], array[0]]));
+    expect(res.body.length).toEqual(10);
+
+  });
+
   it('create new comment', async () => {
 
     const user = await UserService.create({ 
@@ -270,7 +315,7 @@ describe('* routes', () => {
       profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
     });
 
-    const post = await Post.insert({
+    await Post.insert({
       userId: user.id,
       photoUrl: 'no',
       caption: 'yes',
