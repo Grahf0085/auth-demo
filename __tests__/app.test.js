@@ -4,6 +4,7 @@ import request from 'supertest';
 import app from '../lib/app.js';
 import UserService from '../lib/services/UserService.js';
 import Post from '../lib/models/Post.js';
+import Comment from '../lib/models/Comment.js';
 
 describe('* routes', () => {
 
@@ -107,6 +108,48 @@ describe('* routes', () => {
 
     expect(res.body).toEqual([postAlpha, postBravo]);
     
+  });
+
+  it('gets post by id', async () => {
+
+    const user = await UserService.create({ 
+      email: 'tuckerhoog@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
+    const postAlpha = await Post.insert({
+      userId: user.id,
+      photoUrl: 'no',
+      caption: 'yes',
+      tags: ['maybe', 'so']
+    });
+
+    const commentAlpha = await Comment.insert({
+      commentBy: user.id,
+      post: postAlpha.id,
+      comment: 'so cool',
+    });
+
+    const commentBravo = await Comment.insert({
+      commentBy: user.id,
+      post: postAlpha.id,
+      comment: 'so not cool',
+    });
+
+    const res = await agent
+      .get(`/api/v1/posts/${postAlpha.id}`);
+
+    expect(res.body).toEqual({
+      photoUrl: 'no',
+      caption: 'yes',
+      tags: ['maybe', 'so'],
+      email: 'tuckerhoog@tutanota.com',
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b',
+      comment: 'so cool'
+    });
+
+
   });
 
   it('create new comment', async () => {
