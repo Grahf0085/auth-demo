@@ -171,6 +171,37 @@ describe('* routes', () => {
 
   });
 
+  it('PATCH post', async () => {
+
+    const user = await UserService.create({ 
+      email: 'tuckerhoog@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
+    const post = await Post.insert({
+      userId: user.id,
+      photoUrl: 'no',
+      caption: 'yes',
+      tags: ['maybe', 'so']
+    });
+
+    const cap = 'maybe not so';
+
+    const res = await agent
+      .patch(`/api/v1/posts/${post.id}`)
+      .send({ cap });
+
+    expect(res.body).toEqual({
+      id: '1',
+      userId: '1',
+      photoUrl: 'no',
+      caption: 'maybe not so',
+      tags: ['maybe', 'so']
+    });
+
+  });
+
   it('create new comment', async () => {
 
     const user = await UserService.create({ 
