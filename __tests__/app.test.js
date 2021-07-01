@@ -118,6 +118,12 @@ describe('* routes', () => {
       profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
     });
 
+    const userTwo = await UserService.create({ 
+      email: 'tuckerhoogTwo@tutanota.com', 
+      password: 'password', 
+      profilePhotoUrl: 'https://us-browse.startpage.com/av/anon-image?piurl=https%3A%2F%2Fi.ibb.co%2FHh5QNsQ%2FWiseman.png&sp=1625069635Tc55a9e659f1c58353e1c991d4fc8177e769586ea4a7948daa9fd9b2a349c3c0b' 
+    });
+
     const postAlpha = await Post.insert({
       userId: 1,
       photoUrl: 'no',
@@ -125,22 +131,36 @@ describe('* routes', () => {
       tags: ['maybe', 'so']
     });
 
+    const postBravo = await Post.insert({
+      userId: 1,
+      photoUrl: 'sddfsdf',
+      caption: 'sdfsdfsf',
+      tags: ['so', 'sick']
+    });
+
     await Comment.insert({
-      commentBy: user.id,
+      commentBy: 1,
       post: postAlpha.id,
       comment: 'so cool',
     });
 
     await Comment.insert({
-      commentBy: user.id,
+      commentBy: 1,
       post: postAlpha.id,
       comment: 'so not cool',
+    });
+
+    await Comment.insert({
+      commentBy: 2,
+      post: 1,
+      comment: 'so so so so not cool',
     });
 
     const res = await agent
       .get(`/api/v1/posts/${postAlpha.id}`);
 
     expect(res.body).toEqual({
+      id: '1',
       photoUrl: 'no',
       caption: 'yes',
       tags: ['maybe', 'so'],
